@@ -4,7 +4,10 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className=" pb-10 gap-2 flex flex-col items-center justify-center transition-all duration-300 ease-in-out">
+    <main
+      className=" pb-10 gap-2 flex flex-col items-center justify-center 
+    transition-all duration-300 ease-in-out"
+    >
       <HeaderComponent />
       <h2 className="text-2xl font-bold">Bienvenue, sur Servi Toons</h2>
       <p className="max-w-sm text-pretty">

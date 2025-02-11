@@ -37,7 +37,7 @@ const HeaderComponent = () => {
         </Link>
 
         {/* rest of  */}
-        <div className="flex-1 md:flex items-center gap-6 xl:gap-8 hidden">
+        <div className="flex-1 lg:flex items-center gap-6 xl:gap-8 hidden">
           {/* Link search */}
           <Link
             href={"#"}
@@ -79,10 +79,16 @@ const HeaderComponent = () => {
               />
             )}
           </div>
+
+          {!user && (
+            <Button asChild>
+              <Link href={"/connexion"}>Se connecter</Link>
+            </Button>
+          )}
         </div>
 
         {/* Small nav menu */}
-        <div className="md:hidden ml-auto">
+        <div className="lg:hidden ml-auto">
           <SheetComponent
             triggerComponent={<OpenMenuSmallScreen />}
             content={<SmallScreenNavComponent />}
