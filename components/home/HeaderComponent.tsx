@@ -130,7 +130,7 @@ const SmallScreenNavComponent = () => {
   };
 
   return (
-    <div className=" flex flex-col items-center gap-8 w-full min-h-[75dvh]">
+    <div className=" flex flex-col items-center gap-8 w-full min-h-[75dvh] ">
       {/* navigation */}
       <nav className="flex flex-1 flex-col items-center gap-4 w-full h-full border-b">
         {HomeLinksPage.map((lk, idx) => (

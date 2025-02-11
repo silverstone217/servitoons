@@ -88,6 +88,7 @@ model Content {
   id                String                 @id @default(cuid())
   title             String
   subtitle          String?
+  slug              String
   status            String
   content           String
   publishedAt       DateTime               @default(now())

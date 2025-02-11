@@ -13,7 +13,7 @@ const ChangeTheme = () => {
   };
   return (
     <Button
-      className="px-4 py-2 rounded-md text-sm hover:bg-gray-700 
+      className="lg:px-3 px-4 py-2 lg:py-1 rounded-md text-sm hover:bg-gray-700 
       hover:text-white transition duration-300"
       onClick={toggleTheme}
       variant={"outline"}

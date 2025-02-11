@@ -23,6 +23,7 @@ const SignInPage = async () => {
           placeholder="blur"
           blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAAAaAXevAAAAD0lEQVR42mNk+P7eAAAAASUVORK5CYII="
           className="w-full h-full object-cover rounded-md"
+          priority
         />
 
         {/* absolute text div */}
