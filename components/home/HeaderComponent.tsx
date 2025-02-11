@@ -11,6 +11,7 @@ import SheetComponent from "../SheetComponent";
 import { Button } from "../ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import ChangeTheme from "../ChangeTheme";
 
 const HeaderComponent = () => {
   const { data: session } = useSession();
@@ -59,7 +60,9 @@ const HeaderComponent = () => {
                 href={lk.href}
                 className={cn(
                   "hover:text-primary hover:opacity-75 transition-all duration-500 ease-in-out",
-                  lk.href === "/" ? "text-primary" : "text-black"
+                  lk.href === "/"
+                    ? "text-primary"
+                    : "text-black dark:text-white"
                 )}
               >
                 <span>{lk.label}</span>
@@ -68,7 +71,9 @@ const HeaderComponent = () => {
           </nav>
 
           {/* profile and logout */}
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-2">
+            {/* change theme */}
+            <ChangeTheme />
             {user && (
               <DropDownMenuComponent
                 triggerComponent={
@@ -134,7 +139,9 @@ const SmallScreenNavComponent = () => {
             href={lk.href}
             className={cn(
               "hover:opacity-75 hover:bg-primary transition-all duration-500 ease-in-out",
-              lk.href === "/" ? "bg-primary text-white" : "text-black",
+              lk.href === "/"
+                ? "bg-primary text-white"
+                : "text-black dark:text-white",
               "flex items-center w-full p-2 gap-4 rounded-lg"
             )}
           >
@@ -161,7 +168,10 @@ const SmallScreenNavComponent = () => {
             title="Mon profile"
           />
         )}
+        {/* change theme */}
+        <ChangeTheme />
 
+        {/* sign out */}
         {user && (
           <Button
             className="w-full"
@@ -172,6 +182,7 @@ const SmallScreenNavComponent = () => {
           </Button>
         )}
 
+        {/* sign in */}
         {!user && (
           <Button asChild className="w-full">
             <Link href={"/connexion"}>Se connecter</Link>
