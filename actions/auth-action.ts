@@ -57,7 +57,7 @@ export async function createNewUser({
     });
 
     if (isUserExist) {
-      return "Cet email est déjà utilisé.";
+      return { error: true, message: "Cet email est déjà utilisé." };
     }
 
     const hashedPassword = await hash(password, 10);
@@ -74,7 +74,10 @@ export async function createNewUser({
     console.log(newUser.name);
   } catch (error) {
     console.error("Authentication error:", error);
-    return "Une erreur est survenue lors de l'inscription.";
+    return {
+      error: true,
+      message: "Une erreur est survenue lors de l'inscription.",
+    };
   }
 }
 

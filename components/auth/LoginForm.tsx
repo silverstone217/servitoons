@@ -30,10 +30,17 @@ const LoginForm = () => {
     setLoading(true);
     try {
       if (pathname !== "/connexion") {
-        await createNewUser({
+        const resultCreate = await createNewUser({
           email: email,
           password: password,
         });
+        if (resultCreate?.error) {
+          toast({
+            title: "Erreur d'inscription",
+            description: resultCreate.message,
+          });
+          return;
+        }
       }
 
       const result = await authenticate({
