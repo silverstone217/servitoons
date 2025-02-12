@@ -66,7 +66,7 @@ const SmallScreenNavComponentDashboard = () => {
   return (
     <div className="flex flex-col gap-4 min-h-full justify-between ">
       {/* Links */}
-      <div className="flex-1 w-full border-b flex flex-col gap-4 pb-4 pt-2 min-h-[50dvh]">
+      <div className="flex-1 w-full border-b flex flex-col gap-4 pb-4 pt-2 min-h-[40dvh]">
         {ProfileUserPages.map((lk, idx) => (
           <Link
             href={lk.href}
