@@ -15,7 +15,7 @@ const DashboardLayout = ({ children }: Props) => {
       <AsideNavigation />
 
       {/* content */}
-      <div className="lg:h-full lg:overflow-y-auto lg:overflow-x-hidden lg:flex-1 bg-slate-600 p-4">
+      <div className="lg:h-full lg:overflow-y-auto lg:overflow-x-hidden lg:flex-1 p-4">
         {children}
       </div>
     </div>
