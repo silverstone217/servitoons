@@ -12,6 +12,7 @@ import { Button } from "../ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import ChangeTheme from "../ChangeTheme";
+import LogoApp from "../LogoApp";
 
 const HeaderComponent = () => {
   const { data: session } = useSession();
@@ -22,19 +23,7 @@ const HeaderComponent = () => {
       <div className="flex items-center  mx-auto p-4 gap-6 xl:gap-8">
         {/* logo */}
         <Link href={"/"} className="font-bold text-2xl flex gap-1 group">
-          <span
-            className="group-hover:text-primary transition-all duration-500 ease-in-out
-          "
-          >
-            Servi
-          </span>
-          <span
-            className="text-primary group-hover:text-black dark:group-hover:text-white
-          transition-all duration-500 ease-in-out font-serif font-extrabold
-          "
-          >
-            Toons
-          </span>
+          <LogoApp />
         </Link>
 
         {/* rest of  */}
@@ -106,7 +95,7 @@ const HeaderComponent = () => {
 
 export default HeaderComponent;
 
-const OpenMenuSmallScreen = () => {
+export const OpenMenuSmallScreen = () => {
   return <AlignJustify />;
 };
 

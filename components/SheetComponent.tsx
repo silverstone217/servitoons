@@ -28,7 +28,7 @@ const SheetComponent = ({
     <Sheet>
       <SheetTrigger>{triggerComponent}</SheetTrigger>
       <SheetContent
-        className="w-full min-h-dvh overflow-y-auto overflow-x-hidden"
+        className="w-full h-dvh overflow-y-auto overflow-x-hidden"
         side={side}
       >
         <SheetHeader>

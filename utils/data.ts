@@ -5,6 +5,7 @@ import {
   GalleryHorizontal,
   User,
   LayoutDashboard,
+  GalleryThumbnails,
 } from "lucide-react";
 
 // Array of home links for the navigation bar
@@ -33,12 +34,17 @@ export const HomeLinksPage = [
 
 export const ProfileUserPages = [
   {
-    href: "#",
+    href: "/overview",
     label: "Dashboard",
     icon: LayoutDashboard,
   },
   {
-    href: "#",
+    href: "/contenus",
+    label: "Mes publications",
+    icon: GalleryThumbnails,
+  },
+  {
+    href: "/profile",
     label: "Profile",
     icon: User,
   },
