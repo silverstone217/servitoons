@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 
 const page = () => {
@@ -5,7 +6,11 @@ const page = () => {
     <div className="flex flex-col gap-10 w-full">
       <h1 className="text-3xl font-bold">{`Page d'accueil`}</h1>
       <p>Bienvenue sur votre application Next.js avec Tailwind CSS.</p>
-      <button className="w-full bg-primary text-white hover:bg-primary-dark transition-all duration-500 ease-in-out">
+      <button
+        className="w-full bg-primary text-white hover:bg-primary-dark 
+      transition-all duration-500 ease-in-out"
+        onClick={() => console.log("Cliquez sur le bouton")}
+      >
         Cliquez ici
       </button>
 

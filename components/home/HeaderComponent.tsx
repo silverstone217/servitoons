@@ -138,11 +138,30 @@ const SmallScreenNavComponent = () => {
             <span>{lk.label}</span>
           </Link>
         ))}
+        {user &&
+          ProfileUserPages.filter((lk) => !lk.href.includes("profile")).map(
+            (lk, idx) => (
+              <Link
+                key={idx}
+                href={lk.href}
+                className={cn(
+                  "hover:opacity-75 hover:bg-primary transition-all duration-500 ease-in-out",
+                  lk.href === "/"
+                    ? "bg-primary text-white"
+                    : "text-black dark:text-white",
+                  "flex items-center w-full p-2 gap-4 rounded-lg"
+                )}
+              >
+                {lk.icon && <lk.icon />}
+                <span>{lk.label}</span>
+              </Link>
+            )
+          )}
       </nav>
 
       {/* profile and logout */}
       <div className="mt-auto w-full flex flex-col gap-6">
-        {user && (
+        {/* {user && (
           <DropDownMenuComponent
             triggerComponent={
               <div className="w-full flex items-center gap-4">
@@ -156,6 +175,15 @@ const SmallScreenNavComponent = () => {
             dataLinks={ProfileUserPages}
             title="Mon profile"
           />
+        )} */}
+        {user && (
+          <Link href={"/profile"} className="w-full flex items-center gap-4">
+            <AvatarUser avatar={user.image} username={user.name} />
+            <div className="flex flex-col flex-1 text-left">
+              <span className="font-medium">{user.name}</span>
+              <span className="text-xs opacity-75">{user.email}</span>
+            </div>
+          </Link>
         )}
         {/* change theme */}
         <ChangeTheme />
