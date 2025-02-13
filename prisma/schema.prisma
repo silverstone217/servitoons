@@ -92,7 +92,6 @@ model Content {
   cover             String?
   slug              String
   status            String                 @default("on_going")
-  content           String
   publishedAt       DateTime               @default(now())
   isPublished       Boolean                @default(false)
   category          String                 @default("manga")

@@ -18,94 +18,259 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import Image from "next/image";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+import { isEmptyString } from "@/utils/functions";
+// import { Content } from "@prisma/client";
+import {
+  addNewContent,
+  addNewContentSecond,
+  newContentSecondType,
+  newContentType,
+} from "@/actions/content-actions";
+import { categoryType, targetType } from "@/types/contentTypes";
+import { storage } from "@/lib/firebase";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { v4 } from "uuid";
 
-const TabsAddNewContent = () => {
+type Props = {
+  categoryContent: categoryType;
+};
+
+const TabsAddNewContent = ({ categoryContent }: Props) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState<categoryType>(categoryContent);
   const [subTitle, setSubTitle] = useState("");
-  const [author, setAuthor] = useState("");
+  // const [author, setAuthor] = useState("");
   const [publishedAt, setPublishedAt] = useState<Date>(new Date());
   const [tags, setTags] = useState<string[]>([]);
   const [language, setLanguage] = useState("");
   const [editor, setEditor] = useState("");
   const [cover, setCover] = useState<File | null>(null);
   const [image, setImage] = useState<File | null>(null);
-  const [target, setTarget] = useState("");
+  const [target, setTarget] = useState<targetType>("shonen");
   const [artist, setArtist] = useState("");
-  const [isColored, setIsColored] = useState(false);
+  const [isColored, setIsColored] = useState(
+    category === "webtoon" ? true : false
+  );
+
+  const { toast } = useToast();
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
+  // const [contentId, setContentId] = useState("");
+  // const [content, setContent] = useState<Content | null>(null);
+
+  const addImagesToFirebase = async () => {
+    const images: string[] = [];
+    if (!image) {
+      return images;
+    }
+    const imgId = v4().toString().replace(/-/g, "");
+    const coverRef = ref(storage, `servitoons/covers/${imgId}`);
+    const imageRef = ref(storage, `servitoons/images/${imgId}`);
+
+    // send the image
+    const snapshot = await uploadBytes(imageRef, image);
+    // Get the download URL
+    const imgUrl = await getDownloadURL(snapshot.ref);
+    images.push(imgUrl);
+
+    if (cover) {
+      const coverSnapshot = await uploadBytes(coverRef, cover);
+      const coverUrl = await getDownloadURL(coverSnapshot.ref);
+      images.push(coverUrl);
+    }
+    return images;
+  };
+
+  const handleCreateContent = async () => {
+    setLoading(true);
+    try {
+      // first add content
+      const formData: newContentType = {
+        title,
+        description: description.trim(),
+        category,
+        subtitle: subTitle.trim().toLowerCase(),
+        publishedAt,
+        tags,
+        language,
+        target,
+        isColored,
+      };
+
+      const addContent = await addNewContent(formData);
+
+      if (addContent.error) {
+        toast({
+          title: "Erreur de création",
+          description: addContent.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!addContent.contentId) {
+        toast({
+          title: "Erreur de création",
+          description: "Veuillez réessayer plus tard!",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // setContentId(addContent.contentId);
+
+      // then add images
+      const images = await addImagesToFirebase();
+
+      if (images.length === 0) {
+        toast({
+          title: "Erreur d'upload",
+          description: "Veuillez réessayer plus tard!",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // then add artist and additional info
+
+      const secondFormData: newContentSecondType = {
+        artist: [artist.trim().toLowerCase(), "artist"],
+        cover: images[1],
+        image: images[0],
+        editor: editor.trim().toLowerCase(),
+        contentId: addContent.contentId,
+      };
+
+      const addContentSecond = await addNewContentSecond(secondFormData);
+
+      if (addContentSecond.error) {
+        toast({
+          title:
+            "Erreur d'ajout des images et des informations supplémentaires",
+          description: addContentSecond.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // setContent(addContentSecond.content);
+
+      toast({
+        title: "Contenu créé avec succès",
+        description: "Le contenu a été créé avec succès!",
+      });
+
+      // navigate to content page
+      // router.push(`/contenus/${addContent.contentId}`);
+      router.refresh();
+    } catch (error) {
+      const err = error as Error;
+      toast({
+        title: "Erreur de création",
+        description: err.message,
+        variant: "destructive",
+      });
+    } finally {
+      setTimeout(() => setLoading(false), 3000);
+    }
+  };
 
   return (
-    <Tabs defaultValue="principal_info" className="w-full ">
-      {/* tabs trigger */}
-      <TabsList className="grid grid-cols-4">
-        <TabsTrigger value="principal_info" className="line-clamp-1">
-          principale Information
-        </TabsTrigger>
-        <TabsTrigger value="add_info" className="line-clamp-1">
-          Additionnelle Information
-        </TabsTrigger>
-        <TabsTrigger value="edit" className="line-clamp-1">
-          Edition
-        </TabsTrigger>
-        <TabsTrigger value="images" className="line-clamp-1">
-          Cover et image
-        </TabsTrigger>
-      </TabsList>
+    <>
+      <Tabs defaultValue="principal_info" className="w-full ">
+        {/* tabs trigger */}
+        <TabsList className="grid grid-cols-4">
+          <TabsTrigger value="principal_info" className="line-clamp-1">
+            principale Information
+          </TabsTrigger>
+          <TabsTrigger value="add_info" className="line-clamp-1">
+            Additionnelle Information
+          </TabsTrigger>
+          <TabsTrigger value="edit" className="line-clamp-1">
+            Edition
+          </TabsTrigger>
+          <TabsTrigger value="images" className="line-clamp-1">
+            Cover et image
+          </TabsTrigger>
+        </TabsList>
 
-      {/* tabs content */}
-      <TabsContent value="principal_info">
-        {/* main info */}
-        <PrincipaleInfo
-          title={title}
-          description={description}
-          category={category}
-          subTitle={subTitle}
-          setCategory={setCategory}
-          setSubTitle={setSubTitle}
-          setDescription={setDescription}
-          setTitle={setTitle}
-        />
-      </TabsContent>
+        {/* tabs content */}
+        <TabsContent value="principal_info">
+          {/* main info */}
+          <PrincipaleInfo
+            title={title}
+            description={description}
+            category={category}
+            subTitle={subTitle}
+            setCategory={setCategory}
+            setSubTitle={setSubTitle}
+            setDescription={setDescription}
+            setTitle={setTitle}
+          />
+        </TabsContent>
 
-      {/* add info */}
-      <TabsContent value="add_info">
-        <AdditionaInformation
-          isColored={isColored}
-          language={language}
-          setLanguage={setLanguage}
-          setIsColored={setIsColored}
-          setTags={setTags}
-          tags={tags}
-          setTarget={setTarget}
-          target={target}
-        />
-      </TabsContent>
+        {/* add info */}
+        <TabsContent value="add_info">
+          <AdditionaInformation
+            isColored={isColored}
+            language={language}
+            setLanguage={setLanguage}
+            setIsColored={setIsColored}
+            setTags={setTags}
+            tags={tags}
+            setTarget={setTarget}
+            target={target}
+          />
+        </TabsContent>
 
-      {/* edition and other info */}
-      <TabsContent value="edit">
-        <EditorsOtherInfo
-          author={author}
-          publishedAt={publishedAt}
-          setAuthor={setAuthor}
-          setPublishedAt={setPublishedAt}
-          artist={artist}
-          setArtist={setArtist}
-          editor={editor}
-          setEditor={setEditor}
-        />
-      </TabsContent>
+        {/* edition and other info */}
+        <TabsContent value="edit">
+          <EditorsOtherInfo
+            // author={author}
+            publishedAt={publishedAt}
+            // setAuthor={setAuthor}
+            setPublishedAt={setPublishedAt}
+            artist={artist}
+            setArtist={setArtist}
+            editor={editor}
+            setEditor={setEditor}
+          />
+        </TabsContent>
 
-      {/* images */}
-      <TabsContent value="images">
-        <ImageCover
-          cover={cover}
-          image={image}
-          setCover={setCover}
-          setImage={setImage}
-        />
-      </TabsContent>
-    </Tabs>
+        {/* images */}
+        <TabsContent value="images">
+          <ImageCover
+            cover={cover}
+            image={image}
+            setCover={setCover}
+            setImage={setImage}
+          />
+        </TabsContent>
+      </Tabs>
+
+      {/* submit btn */}
+      <Button
+        className="w-full"
+        disabled={
+          loading ||
+          isEmptyString(title) ||
+          isEmptyString(description) ||
+          !category ||
+          !image ||
+          !tags.length ||
+          isEmptyString(target) ||
+          isEmptyString(language) ||
+          !publishedAt
+        }
+        onClick={handleCreateContent}
+      >
+        {loading ? "en cours..." : "Publier le contenu"}
+      </Button>
+    </>
   );
 };
 
@@ -115,12 +280,12 @@ export default TabsAddNewContent;
 type PrincipaleInfoType = {
   title: string;
   description: string;
-  category: string;
+  category: categoryType;
   subTitle: string;
 
   setTitle: React.Dispatch<React.SetStateAction<string>>;
   setDescription: React.Dispatch<React.SetStateAction<string>>;
-  setCategory: React.Dispatch<React.SetStateAction<string>>;
+  setCategory: React.Dispatch<React.SetStateAction<categoryType>>;
   setSubTitle: React.Dispatch<React.SetStateAction<string>>;
 };
 const PrincipaleInfo = ({
@@ -168,7 +333,7 @@ const PrincipaleInfo = ({
 
       {/* desc */}
       <div className="grid w-full gap-1.5">
-        <Label htmlFor="description-2">Description</Label>
+        <Label htmlFor="description-2">Description *</Label>
         <Textarea
           placeholder="Décrire votre oeuvre..."
           id="description-2"
@@ -185,17 +350,17 @@ const PrincipaleInfo = ({
 type AdditionaInformationType = {
   language: string;
   tags: string[];
-  target: string;
+  target: targetType;
   isColored: boolean;
 
   setLanguage: React.Dispatch<React.SetStateAction<string>>;
   setTags: React.Dispatch<React.SetStateAction<string[]>>;
   setIsColored: React.Dispatch<React.SetStateAction<boolean>>;
-  setTarget: React.Dispatch<React.SetStateAction<string>>;
+  setTarget: React.Dispatch<React.SetStateAction<targetType>>;
 };
 
 const AdditionaInformation = ({
-  //   language,
+  language,
   tags,
   target,
   isColored,
@@ -204,7 +369,7 @@ const AdditionaInformation = ({
   setIsColored,
   setTarget,
 }: AdditionaInformationType) => {
-  const [langs, setLangs] = useState<string[]>([]);
+  // const [langs, setLangs] = useState<string[]>([]);
   //   const [tag, setTag] = useState("");
   return (
     <div className="w-full flex flex-col gap-8 mt-4">
@@ -213,7 +378,7 @@ const AdditionaInformation = ({
       {/* alert msg */}
       <AlertMessage
         title="Info additionnelle"
-        message="Vous pouvez choisir plusieurs langues et aussi plusieurs tags en cliquant sur different langue ou tag."
+        message="Vous pouvez choisir une langue et aussi plusieurs tags en cliquant sur la langue ou ces différents tags."
         type="info"
       />
 
@@ -227,19 +392,20 @@ const AdditionaInformation = ({
               className={cn(
                 "flex items-center gap-1 hover:opacity-70 px-2 py-1 rounded-md",
 
-                langs.includes(lan.value) && " bg-primary"
+                language.includes(lan.value) && " bg-primary"
               )}
               onClick={() => {
-                if (langs.includes(lan.value)) {
-                  setLangs(langs.filter((l) => l !== lan.value));
-                  setLanguage(langs.join(","));
-                  return;
-                }
-                setLangs([...langs, lan.value]);
-                setLanguage(langs.join(","));
+                // if (langs.includes(lan.value)) {
+                //   setLangs(langs.filter((l) => l !== lan.value));
+                //   setLanguage(langs.join(","));
+                //   return;
+                // }
+                // setLangs([...langs, lan.value]);
+                // setLanguage(langs.join(","));
+                setLanguage(lan.value);
               }}
             >
-              {langs.includes(lan.value) ? (
+              {language.includes(lan.value) ? (
                 <CircleCheck className="size-4" />
               ) : (
                 <Circle className="size-4" />
@@ -290,7 +456,10 @@ const AdditionaInformation = ({
       {/* target */}
       <div className="grid w-full gap-1.5">
         <Label htmlFor="target">Cible ou Audience *</Label>
-        <Select value={target} onValueChange={(value) => setTarget(value)}>
+        <Select
+          value={target}
+          onValueChange={(value: targetType) => setTarget(value)}
+        >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Chosir votre audience" />
           </SelectTrigger>
@@ -321,23 +490,23 @@ const AdditionaInformation = ({
 
 // Editors
 type EditorsType = {
-  author: string;
+  // author: string;
   editor: string;
   artist: string;
   publishedAt: Date;
 
-  setAuthor: React.Dispatch<React.SetStateAction<string>>;
+  // setAuthor: React.Dispatch<React.SetStateAction<string>>;
   setEditor: React.Dispatch<React.SetStateAction<string>>;
   setArtist: React.Dispatch<React.SetStateAction<string>>;
   setPublishedAt: React.Dispatch<React.SetStateAction<Date>>;
 };
 
 const EditorsOtherInfo = ({
-  author,
+  // author,
   editor,
   artist,
   publishedAt,
-  setAuthor,
+  // setAuthor,
   setEditor,
   setArtist,
   setPublishedAt,
@@ -347,7 +516,7 @@ const EditorsOtherInfo = ({
       <h2 className="lg:hidden">Editeurs, Artistes et Date de publication</h2>
 
       {/* author */}
-      <div className="grid w-full gap-1.5">
+      {/* <div className="grid w-full gap-1.5">
         <Label htmlFor="author">Auteur *</Label>
         <Input
           type="text"
@@ -361,7 +530,7 @@ const EditorsOtherInfo = ({
           autoCorrect="off"
           maxLength={100}
         />
-      </div>
+      </div> */}
 
       {/* editor */}
       <div className="grid w-full gap-1.5">
@@ -430,7 +599,7 @@ const ImageCover = ({ image, cover, setImage, setCover }: ImageCoverType) => {
 
       {/* image */}
       <div className="grid w-full gap-1.5">
-        <Label htmlFor="image">Image</Label>
+        <Label htmlFor="image">Image *</Label>
         <Input
           type="file"
           id="image"

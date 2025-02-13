@@ -1,9 +1,11 @@
 import { getUser } from "@/actions/auth-action";
+import { getContentWIthUserId } from "@/actions/content-actions";
 import AddNewContentBtn from "@/components/dashboard/contents/AddNewContentBtn";
 import MyContentsComponent from "@/components/dashboard/contents/MyContentsComponent";
 import { Button } from "@/components/ui/button";
+import { Content } from "@prisma/client";
 import Link from "next/link";
-import React from "react";
+import React, { Suspense } from "react";
 
 const page = async () => {
   const user = await getUser();
@@ -21,6 +23,9 @@ const page = async () => {
       </div>
     );
   }
+
+  const myContents = (await getContentWIthUserId()) as Content[];
+
   return (
     <main className="flex flex-col gap-10 w-full">
       {/* manga, wt, LN */}
@@ -36,8 +41,10 @@ const page = async () => {
           <AddNewContentBtn />
         </div>
 
-        {/* manga */}
-        <MyContentsComponent />
+        {/* manga, wt, ln */}
+        <Suspense fallback={<p>Chargement...</p>}>
+          <MyContentsComponent myContents={myContents} />
+        </Suspense>
       </div>
 
       {/* Illustrations */}

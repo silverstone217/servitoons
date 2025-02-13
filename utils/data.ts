@@ -183,3 +183,18 @@ export const TargetData = [
     value: "kodomo",
   },
 ];
+
+export const CategoriesData = [
+  {
+    label: "Manga",
+    value: "manga",
+  },
+  {
+    label: "Webtoon",
+    value: "webtoon",
+  },
+  {
+    label: "Light Novel",
+    value: "light_novel",
+  },
+];

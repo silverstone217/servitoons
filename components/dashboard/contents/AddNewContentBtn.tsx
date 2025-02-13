@@ -47,7 +47,7 @@ const AddNewContentBtn = () => {
             <span className="ml-2 text-gray-500">Ajouter un WebToon</span>
           </button>
           <button
-            onClick={() => router.push("/contenus/ln/ajouter")}
+            onClick={() => router.push("/contenus/light_novel/ajouter")}
             className="flex items-center gap-4 w-full h-12 px-4 border rounded-md text-sm cursor-pointer"
           >
             Light Novel

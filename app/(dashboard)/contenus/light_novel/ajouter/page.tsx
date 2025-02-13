@@ -27,7 +27,7 @@ const page = async () => {
     <div className="w-full flex flex-col gap-10">
       <div className="w-full gap-4 flex flex-col ">
         <h2 className="text-2xl font-bold text-pretty max-w-sm">
-          Ajouter un nouveau manga.
+          Ajouter un nouveau light novel.
         </h2>
 
         {/* alert msg */}
@@ -39,7 +39,7 @@ const page = async () => {
       </div>
 
       {/* Tables forms */}
-      <TabsAddNewContent categoryContent="manga" />
+      <TabsAddNewContent categoryContent="light_novel" />
     </div>
   );
 };
