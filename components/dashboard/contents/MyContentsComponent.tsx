@@ -42,9 +42,14 @@ const MyContentsComponent = ({ myContents }: Props) => {
         )
         .filter((item) =>
           tag === "all" ? true : item.tags.some((t) => t === tag)
+        )
+        .filter((item) =>
+          language === "all" ? true : item.language.includes(language)
+        )
+        .filter((item) =>
+          target === "all" ? true : item.target.includes(target)
         ),
-
-    [myContents, searchText, category, tag]
+    [myContents, searchText, category, tag, language, target]
   );
 
   return (
