@@ -17,6 +17,7 @@ import {
   TargetData,
 } from "@/utils/data";
 import { SheetClose } from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
 
 type Props = {
   myContents: Content[];
@@ -53,7 +54,7 @@ const MyContentsComponent = ({ myContents }: Props) => {
   );
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 max-w-7xl mx-auto">
       {/* header search filter */}
       <div className="flex items-center gap-4 w-full">
         {/* text-search */}
@@ -90,7 +91,7 @@ const MyContentsComponent = ({ myContents }: Props) => {
       )}
       <div
         className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 
-      xl:grid-cols-6 2xl:grid-cols-12 gap-6 w-full
+      xl:grid-cols-6  gap-6 w-full
       transition-all duration-500 ease-in-out
       "
       >
@@ -126,6 +127,19 @@ export default MyContentsComponent;
 
 // Item Card content component
 export const ItemCardContent = ({ content }: { content: Content }) => {
+  const returnCategoryColor = (value: string) => {
+    switch (value) {
+      case "manga":
+        return "text-blue-500";
+      case "light_novel":
+        return "text-green-500";
+      case "webtoon":
+        return "text-red-500";
+      default:
+        return "text-gray-600";
+    }
+  };
+
   return (
     <div
       className="flex flex-col gap-4 w-full group transition-all duration-500 ease-in-out
@@ -143,7 +157,7 @@ export const ItemCardContent = ({ content }: { content: Content }) => {
           height={800}
           alt={content.title}
           priority
-          className=" h-52 w-full object-cover rounded-md
+          className=" h-56 w-full object-cover rounded-md
           transition-all duration-500 ease-in-out
           group-hover:scale-110
           "
@@ -158,13 +172,15 @@ export const ItemCardContent = ({ content }: { content: Content }) => {
         </h3>
 
         {/* category and lang */}
-        <div className="w-full text-sm flex items-center justify-between capitalize">
-          <span>{content.category}</span>
+        <div className="w-full text-xs flex items-center justify-between capitalize">
+          <span className={cn(returnCategoryColor(content.category))}>
+            {content.category}
+          </span>
           <span className="text-primary">{content.language}</span>
         </div>
 
         {/* Views and BookMarks */}
-        <div className="w-full text-sm flex items-center justify-between">
+        <div className="w-full text-xs flex items-center justify-between">
           <p className="flex items-center gap-0.5">
             <Eye className="size-4" />
             <span>1400</span>

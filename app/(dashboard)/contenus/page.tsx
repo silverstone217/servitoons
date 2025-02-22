@@ -31,7 +31,7 @@ const page = async () => {
       {/* manga, wt, LN */}
       <div className="w-full flex flex-col gap-10">
         {/* Top and Add new one */}
-        <div className="w-full flex flex-wrap gap-4 items-center justify-between">
+        <div className="w-full flex flex-wrap gap-4 items-center justify-between max-w-7xl mx-auto">
           {/* text */}
           <h2 className="text-2xl text-primary font-bold text-pretty max-w-sm">
             Mes mangas, WebToons et Light Novels
