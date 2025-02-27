@@ -34,7 +34,7 @@ const AsideNavigation = () => {
 
   return (
     <aside
-      className="hidden lg:flex flex-col flex-shrink-0 min-w-[200px] max-w-[300px] 
+      className="hidden lg:flex flex-col flex-shrink-0 min-w-[200px] xl:min-w-[250px] max-w-[300px] 
     bg-secondary h-full overflow-x-hidden overflow-y-hidden py-4 gap-4"
     >
       {/* logo top*/}
